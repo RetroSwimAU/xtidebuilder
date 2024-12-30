@@ -7,6 +7,7 @@ makefile_fixer()
 	sed -i 's;AS = nasm.exe;AS = nasm;g' makefile
 	sed -i 's;RM = -del /Q;RM = -rm -rf;g' makefile
 	sed -i 's;@$(RM) $(BUILD_DIR)\\*.*;@$(RM) $(BUILD_DIR)/*;g' makefile
+	sed -i 's;\\;/;g' makefile
 }
 
 source options
