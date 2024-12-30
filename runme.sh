@@ -12,7 +12,9 @@ fi
 
 docker build -t xtide_builder .
 
-docker run -it --rm --volume /etc/passwd:/etc/passwd:ro --volume /etc/group:/etc/group:ro --user $(id -u) -v $(pwd)/src:/src xtide_builder
+# This is an easy way of ensuring the resulting files are owned by the user running this script.
+
+docker run -it --rm --user $(id -u):$(id -g) -v $(pwd)/src:/src xtide_builder
 
 if [ $? -eq 0 ]; then
 	mkdir -p bin
