@@ -3,9 +3,11 @@ This is a nice automated way to build XTIDE Universal BIOS ROMs, including creat
 What this does:
 * Creates a containerised environment with
   * Alpine Linux
+  * Subversion
   * GNU Make
   * NASM
   * UPX
+  * Perl
 * Clones the XUB Subversion repo
 * Patches the Makefiles to be nice and unixy
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
