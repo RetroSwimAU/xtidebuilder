@@ -11,7 +11,8 @@ What this does:
 * Clones the XUB Subversion repo
 * Patches the Makefiles to be nice and unixy
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
-* Builds the binaries using the `checksum` target, producing ready-to-burn ROM images, tested in PCem.
+* Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in PCem.
+* Builds the configurator utility, also tested in PCem.
 
 On Linux (and macOS probably):
 * Install Docker
@@ -41,6 +42,6 @@ Extra features:
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
-  * For showing me how ugly the build process is currently
+  * For inspiring me to build this toolchain
 * XTIDE Universal BIOS Team https://www.xtideuniversalbios.org/
   * For creating this truly incredible bit of software, keeping retro PCs alive, one EPROM at a time. <3
