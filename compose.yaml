@@ -1,0 +1,5 @@
+services:
+  xtide-builder:
+    build: .
+    volumes:
+      - ./src:/src:rw
