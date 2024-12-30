@@ -12,8 +12,6 @@ fi
 
 docker build -t xtide_builder .
 
-# This is an easy way of ensuring the resulting files are owned by the user running this script.
-
 docker run -it --rm --user $(id -u):$(id -g) -v $(pwd)/src:/src xtide_builder
 
 if [ $? -eq 0 ]; then
@@ -24,4 +22,6 @@ if [ $? -eq 0 ]; then
 	cp src/trunk/XTIDE_Universal_BIOS/Build/* bin/rom/
 	cp src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/* bin/tool/
 	echo "Binaries copied to ./bin. Enjoy!"
+else
+	echo "Something went wrong with the build, sorry! :("
 fi
