@@ -3,6 +3,7 @@ This is a nice automated way to build XTIDE Universal BIOS ROMs, including creat
 What this does:
 * Creates a containerised environment with
   * Alpine Linux
+  * Bash
   * Subversion
   * GNU Make
   * NASM
@@ -37,8 +38,16 @@ On Windows:
  
 Extra features:
 * Edit the `options` file under resources to affect how the build is performed
-  * For more information on what these options do, see the XUB build instructions: https://www.xtideuniversalbios.org/wiki/BuildInstructions
+  * `BUILD` is the make target. E.g. `all`, `small`, `large`, `custom`, `checksum`, etc. Default is `checksum`, as this produces ready-to-flash ROMs.
+  * `CUSTOM_DEFINES` is the list of modules to include in a custom build. E.g. `MODULE_STRINGS_COMPRESSED`,  `MODULE_HOTKEYS`,  `MODULE_8BIT_IDE`, etc.
+  * `CUSTOM_SIZE` is the output ROM size for a custom build. E.g. `12288`.
+  * For a list of make targets and modules, see the Makefile contents: https://www.xtideuniversalbios.org/svn/xtideuniversalbios/trunk/XTIDE_Universal_BIOS/makefile
+  * For more information, see the XUB build instructions: https://www.xtideuniversalbios.org/wiki/BuildInstructions
   * The example values I provided for a custom build came from Bits Und Bolts' video on the subject: https://www.youtube.com/watch?v=ilEZB5pY0VI
+* If you don't like Docker and wish to build directly in your Linux environment, got you covered.
+  * Requires Make, NASM, UPX, Subversion, and Perl.
+    * E.g. `sudo apt install make nasm upx subversion perl`
+  * Clone the repo and run `./uncontained.sh`
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
