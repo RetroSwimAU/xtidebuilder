@@ -2,7 +2,7 @@ FROM alpine:latest
 
 VOLUME ["/src"]
 
-RUN apk add --update bash alpine-sdk nasm upx subversion perl
+RUN apk add --update bash make nasm upx subversion perl
 
 ADD resources/xtide_build.sh /
 ADD resources/options /
