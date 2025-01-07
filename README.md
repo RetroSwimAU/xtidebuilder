@@ -31,7 +31,7 @@ On Windows:
   * Install Docker Desktop
   * Download this repo -- https://github.com/RetroSwimAU/xtidebuilder/archive/refs/heads/main.zip
   * Unzip it somewhere
-  * Open Command Prompt or PowerShell and go to where you unzipped it. Make sure you see compose.yml in `dir`.
+  * Open Command Prompt or PowerShell and go to where you unzipped it. Make sure you see compose.yaml in `dir`.
   * Type `docker compose up` (Or `docker-compose up` maybe, if docker is an older version)
   * Should receive XUB binaries, look in `src/trunk/XTIDE_Universal_BIOS/Build` under where you executed the docker command.
   * NB: I haven't tried this.
