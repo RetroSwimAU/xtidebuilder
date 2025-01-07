@@ -45,9 +45,9 @@ if [ "$BUILD" == "custom" ]; then
 	sed -i "s/BIOS_SIZE_CUSTOM = ?/BIOS_SIZE_CUSTOM = $CUSTOM_SIZE/g" makefile
 fi
 
-echo "Fix trailing whitespace on revision file"
+echo "Fix trailing non-0x20 whitespace on revision file, if present"
 
-sed -i 's/[ \t\0\r\n]*$//g' Inc/Revision.inc
+sed -i 's/[\t\0\r\n]*$//g' Inc/Revision.inc
 
 make $BUILD
 
