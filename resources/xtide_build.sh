@@ -13,7 +13,7 @@ makefile_fixer()
 source options
 
 if [ "$BUILD" == "" ]; then
-	echo "WARN: Empty BUILD variable, is the options file missing, empty of malformed? Proceed with 'checksum' build"
+	echo "WARN: Empty BUILD variable, is the options file missing, empty or malformed? Proceed with 'checksum' build"
 	BUILD=checksum
 fi
 
@@ -45,7 +45,7 @@ if [ "$BUILD" == "custom" ]; then
 	sed -i "s/BIOS_SIZE_CUSTOM = ?/BIOS_SIZE_CUSTOM = $CUSTOM_SIZE/g" makefile
 fi
 
-echo "Fix trailing whitespate on revision file"
+echo "Fix trailing whitespace on revision file"
 
 sed -i 's/[ \t\0\r\n]*$//g' Inc/Revision.inc
 
