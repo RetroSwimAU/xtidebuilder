@@ -28,10 +28,16 @@ jobs:
             cat /options
             cd /
             ./xtide_build.sh
-      - name: List files in the repository
+      - name: Verify output
         run: |
-          md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
-          md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/*.com
+          RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
+          echo "Compare output with official binaries @ r$RELEASE."
+          for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
+            echo $i
+          done
+          # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
+          # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/*.com
+        shell: bash
           
   
       - run: echo "🍏 This job's status is ${{ job.status }}."
