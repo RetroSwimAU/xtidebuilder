@@ -5,13 +5,10 @@ jobs:
   Build-Validation:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: List files in the repository
-        run: |
-          ls -l ${{ github.workspace }}
+      # - name: Check out repository code
+      #   uses: actions/checkout@v4
       - name: Select 'all' target
-        run: sed -i "s/checksum/all/g" ${{ github.workspace }}/resources/options
+        run: sed -i "s/checksum/all/g" ${{ runner.workspace }}/resources/options
       # - name: Docker Setup Docker
       #   uses: docker/setup-docker-action@v4.1.0
       - name: Build and push Docker images
@@ -19,16 +16,19 @@ jobs:
         with:
           push: false
           tags: xtide-builder:latest
-      - run: mkdir -p ${{ github.workspace }}/src
+      - run: mkdir -p ${{ runner.workspace }}/src
       - uses: addnab/docker-run-action@v3
         with:
           # username: ${{ secrets.DOCKER_USERNAME }}
           # password: ${{ secrets.DOCKER_PASSWORD }}
           # registry: gcr.io
           image: xtide-builder:latest
-          options: --user 1001:121 -v ${{ github.workspace }}/src:/src
+          options: --user 1001:121 -v ${{ runner.workspace }}/src:/src
           run: |
             cd /
             ./xtide_build.sh
+      - name: List files in the repository
+        run: |
+          ls -l ${{ runner.workspace }}/src
   
       - run: echo "🍏 This job's status is ${{ job.status }}."
