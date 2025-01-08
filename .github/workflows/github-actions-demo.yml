@@ -30,14 +30,24 @@ jobs:
             ./xtide_build.sh
       - name: Verify output
         run: |
+          mkdir -p ${{ github.workspace }}/compare
+          cd ${{ github.workspace }}/compare
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           echo "Compare output with official binaries @ r$RELEASE."
+          EXITCODE=0
+          echo "Filename\tActual\tExpected"
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
-            IBASE=$(basename $i)
-            echo "$i -> $IBASE"
+            BINNAME=$(basename $i)
+            wget https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
+            EXPECTED=$(tail -c +64 $BINNAME | md5sum | cut -d ' ' -f 1)
+            ACTUAL=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
+            if [ $EXPECTED == $ACTUAL ]; then
+              echo "$i\t$ACTUAL\t$EXPECTED :white_check_mark:"
+            else
+              echo "$i\t$ACTUAL\t$EXPECTED :x:"
+              EXITCODE=1
           done
-          # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
-          # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/*.com
+          exit $SUCCESS
         shell: bash
           
   
