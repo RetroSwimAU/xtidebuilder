@@ -1,10 +1,29 @@
-name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+name: Build Validation
+run-name: ${{ github.actor }} pushed an update
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Build-Validation:
     runs-on: ubuntu-latest
     steps:
+      - name: Docker Setup Docker
+        uses: docker/setup-docker-action@v4.1.0
+      - name: Build and push Docker images
+        uses: docker/build-push-action@v6.11.0
+        with:
+          push: false
+          tags: xtide-builder
+      - run: mkdir -p ${{ github.workspace }}/src
+      - uses: addnab/docker-run-action@v3
+        with:
+          # username: ${{ secrets.DOCKER_USERNAME }}
+          # password: ${{ secrets.DOCKER_PASSWORD }}
+          # registry: gcr.io
+          image: xtide-builder
+          options: -v ${{ github.workspace }}/src:/src
+          # run: |
+          #   echo "Running Script"
+          #   /work/run-script
+  
       - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
       - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
       - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
