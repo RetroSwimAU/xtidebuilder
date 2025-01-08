@@ -5,8 +5,8 @@ jobs:
   Build-Validation:
     runs-on: ubuntu-latest
     steps:
-      # - name: Check out repository code
-      #   uses: actions/checkout@v4
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Select 'all' target
         run: sed -i "s/checksum/all/g" ${{ runner.workspace }}/resources/options
       # - name: Docker Setup Docker
