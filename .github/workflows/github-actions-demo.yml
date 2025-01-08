@@ -19,7 +19,7 @@ jobs:
           # password: ${{ secrets.DOCKER_PASSWORD }}
           # registry: gcr.io
           image: xtide-builder:latest
-          options: --user $(id --user):$(id --group) -v ${{ github.workspace }}/src:/src
+          options: --user 1001:121 -v ${{ github.workspace }}/src:/src
           run: |
             cd /
             ./xtide_build.sh
