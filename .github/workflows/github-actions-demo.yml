@@ -33,7 +33,8 @@ jobs:
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           echo "Compare output with official binaries @ r$RELEASE."
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
-            echo "$i"
+            IBASE=$(basename $i)
+            echo "$i -> $IBASE"
           done
           # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
           # md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/*.com
