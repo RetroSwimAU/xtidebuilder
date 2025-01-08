@@ -46,6 +46,7 @@ jobs:
             else
               echo "$i\t$ACTUAL\t$EXPECTED :x:"
               EXITCODE=1
+            fi
           done
           exit $SUCCESS
         shell: bash
