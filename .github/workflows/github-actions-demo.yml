@@ -12,6 +12,7 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.11.0
         with:
+          context: ${{ github.workspace }}
           push: false
           tags: xtide-builder:latest
       - run: mkdir -p ${{ github.workspace }}/src
@@ -29,6 +30,8 @@ jobs:
             ./xtide_build.sh
       - name: List files in the repository
         run: |
-          ls -l ${{ github.workspace }}/src
+          md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
+          md5sum ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS_Configurator_v2/Build/*.com
+          
   
       - run: echo "🍏 This job's status is ${{ job.status }}."
