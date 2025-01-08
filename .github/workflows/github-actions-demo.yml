@@ -5,6 +5,8 @@ jobs:
   Build-Validation:
     runs-on: ubuntu-latest
     steps:
+      - name: Select 'all' target
+        run: sed -i "s/checksum/all/g" ${{ github.workspace }}/resources/options
       # - name: Docker Setup Docker
       #   uses: docker/setup-docker-action@v4.1.0
       - name: Build and push Docker images
@@ -33,5 +35,5 @@ jobs:
       - run: echo "🖥️ The workflow is now ready to test your code on the runner."
       - name: List files in the repository
         run: |
-          ls ${{ github.workspace }}
+          ls -l ${{ github.workspace }}/src
       - run: echo "🍏 This job's status is ${{ job.status }}."
