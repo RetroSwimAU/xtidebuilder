@@ -1,6 +1,10 @@
 name: Build Validation
 run-name: ${{ github.actor }} pushed an update
-on: [push]
+on:
+  push:
+    branches:
+      - main
+      - actions-testing
 jobs:
   Build-Validation:
     runs-on: ubuntu-latest
@@ -18,9 +22,6 @@ jobs:
       - run: mkdir -p ${{ github.workspace }}/src
       - uses: addnab/docker-run-action@v3
         with:
-          # username: ${{ secrets.DOCKER_USERNAME }}
-          # password: ${{ secrets.DOCKER_PASSWORD }}
-          # registry: gcr.io
           image: xtide-builder:latest
           options: --user 1001:121 -v ${{ github.workspace }}/src:/src
           run: |
@@ -35,7 +36,7 @@ jobs:
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
-          echo "Filename Size Actual Expected Hash Actual Expected"
+          echo "Filename - Size: Actual Expected - Hash: Actual Expected"
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
             BINNAME=$(basename $i)
             wget -q https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
@@ -43,7 +44,7 @@ jobs:
             EXPECTEDSIZE=$(stat -c%s $BINNAME)
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
-            echo -n "$BINNAME $ACTUALSIZE $EXPECTEDSIZE $ACTUALHASH $EXPECTEDHASH"
+            echo -n "$BINNAME - $ACTUALSIZE $EXPECTEDSIZE - $ACTUALHASH $EXPECTEDHASH "
             if [[ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]]; then
               echo "✅"
             else
