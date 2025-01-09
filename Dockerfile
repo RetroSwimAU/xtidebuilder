@@ -1,4 +1,4 @@
-FROM ubuntu:latest
+FROM debian:bookwork-backports
 
 VOLUME ["/src"]
 
