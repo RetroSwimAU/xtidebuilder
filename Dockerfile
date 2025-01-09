@@ -1,4 +1,4 @@
-FROM debian:bookwork-backports
+FROM debian:bookworm-backports
 
 VOLUME ["/src"]
 
