@@ -2,9 +2,8 @@ This is a nice automated way to build XTIDE Universal BIOS ROMs, including creat
 
 What this does:
 * Creates a containerised environment with
-  * Debian Linux
-    * This used to be Alpine, but for a reason I cannot fathom, the output from NASM differs. Using the Debian base image, my builds are identical, save for the build date.
-    * See: https://gist.github.com/RetroSwimAU/ae03cb8fbface5f2f58d7757e12ba93f      
+  * Debian Linux Bookworm
+    * NB: If the official build server upgrades NASM, this will need to be revisited/updated.
   * Bash
   * Subversion
   * GNU Make
@@ -37,7 +36,7 @@ On Windows:
   * Open Command Prompt or PowerShell and go to where you unzipped it. Make sure you see compose.yaml in `dir`.
   * Type `docker compose up` (Or `docker-compose up` maybe, if docker is an older version)
   * Should receive XUB binaries, look in `src/trunk/XTIDE_Universal_BIOS/Build` under where you executed the docker command.
-  * NB: I haven't tried this.
+  * ~~NB: I haven't tried this.~~ Works great! :D
  
 Extra features:
 * Edit the `options` file under resources to affect how the build is performed
@@ -54,6 +53,7 @@ Extra features:
  
 Validation:
 * Builds the `all` target, pulls the current binaries from the XUB website, and compares the hashes, excluding the first 64 bytes where the build date is baked in (probably don't need quite 64, but seemed like a nice round number).
+* Highly dependent on having the same version of NASM used to build the official binaries. OK for now, if validations fail in future, the docker base image will likely need to be updated.
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
