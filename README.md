@@ -2,7 +2,9 @@ This is a nice automated way to build XTIDE Universal BIOS ROMs, including creat
 
 What this does:
 * Creates a containerised environment with
-  * Alpine Linux
+  * Debian Linux
+    * This used to be Alpine, but for a reason I cannot fathom, the output from NASM differs. Using the Debian base image, my builds are identical, save for the build date.
+    * See: https://gist.github.com/RetroSwimAU/ae03cb8fbface5f2f58d7757e12ba93f      
   * Bash
   * Subversion
   * GNU Make
@@ -14,6 +16,7 @@ What this does:
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
 * Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in PCem.
 * Builds the configurator utility, also tested in PCem.
+* Using a Github Action, verifies weekly that the toolchain produces identical results (except build date in header) to the official binaries
 
 On Linux (and macOS probably):
 * Install Docker
@@ -46,7 +49,7 @@ Extra features:
   * The example values I provided for a custom build came from Bits Und Bolts' video on the subject: https://www.youtube.com/watch?v=ilEZB5pY0VI
 * If you don't like Docker and wish to build directly in your Linux environment, got you covered.
   * Requires Make, NASM, UPX, Subversion, and Perl.
-    * E.g. `sudo apt install make nasm upx subversion perl`
+    * E.g. `sudo apt install make nasm upx-ucl subversion perl`
   * Clone the repo and run `./uncontained.sh`
 
 Credits:
