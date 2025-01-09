@@ -1,8 +1,8 @@
-FROM alpine:latest
+FROM debian:latest
 
 VOLUME ["/src"]
 
-RUN apk add --update bash make nasm upx subversion perl
+RUN apt-get update && apt-get install make nasm upx subversion perl
 
 ADD resources/xtide_build.sh /
 ADD resources/options /
