@@ -38,7 +38,8 @@ jobs:
           EXITCODE=0
           echo "<h2>Validation Results</h2>" >> $GITHUB_STEP_SUMMARY
           echo "<table>" >> $GITHUB_STEP_SUMMARY
-          echo "<tr><th>Filename</th><th>Size</th><th>Actual</th><th>Expected</th><th>Hash</th><th>Actual</th><th>Expected</th><th>Valid?</th></tr>" >> $GITHUB_STEP_SUMMARY
+          echo "<tr><th></th><th colspan=2>Size</th><th colspan=2>Hash</th><th></th></tr>" >> $GITHUB_STEP_SUMMARY
+          echo "<tr><th>Filename</th><th>Actual</th><th>Expected</th><th>Actual</th><th>Expected</th><th>Valid?</th></tr>" >> $GITHUB_STEP_SUMMARY
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
             BINNAME=$(basename $i)
             wget -q https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
@@ -46,7 +47,7 @@ jobs:
             EXPECTEDSIZE=$(stat -c%s $BINNAME)
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
-            echo -n "<tr><td>$BINNAME</td><td></td><td>$ACTUALSIZE</td><td>$EXPECTEDSIZE</td><td></td><td><code>$ACTUALHASH</code></td><td><code>$EXPECTEDHASH</code></td>" >> $GITHUB_STEP_SUMMARY
+            echo -n "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td>$EXPECTEDSIZE</td><td><code>$ACTUALHASH</code></td><td><code>$EXPECTEDHASH</code></td>" >> $GITHUB_STEP_SUMMARY
             if [[ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]]; then
               echo "<td>✅</td></tr>" >> $GITHUB_STEP_SUMMARY
             else
