@@ -1,4 +1,4 @@
-name: Build Validation
+name: Weekly Build Validation
 run-name: Validation run ${{ github.run_number }} by @${{ github.actor }}
 on: 
   workflow_dispatch:
