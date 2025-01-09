@@ -1,10 +1,6 @@
 name: Build Validation
-run-name: ${{ github.actor }} pushed an update
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+run-name: Validation run ${{ github.run_number }} by @${{ github.actor }}
+on: [workflow_dispatch]
 
 jobs:
   Build-Validation:
