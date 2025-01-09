@@ -37,8 +37,8 @@ jobs:
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
           echo "<h2>Validation Results</h2>" >> $GITHUB_STEP_SUMMARY
-          echo "<table>"
-          echo "<tr><th>Filename</th><th>Size</th><th>Actual</th><th>Expected</th><th>Hash</th><th>Actual</th><th>Expected</th><th>Valid?</th></tr>"
+          echo "<table>" >> $GITHUB_STEP_SUMMARY
+          echo "<tr><th>Filename</th><th>Size</th><th>Actual</th><th>Expected</th><th>Hash</th><th>Actual</th><th>Expected</th><th>Valid?</th></tr>" >> $GITHUB_STEP_SUMMARY
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
             BINNAME=$(basename $i)
             wget -q https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
