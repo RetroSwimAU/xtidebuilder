@@ -2,7 +2,7 @@ FROM ubuntu:latest
 
 VOLUME ["/src"]
 
-RUN apt-get update && apt-get install make nasm upx-ucl subversion perl
+RUN apt-get update && apt-get -y install make nasm upx-ucl subversion perl
 
 ADD resources/xtide_build.sh /
 ADD resources/options /
