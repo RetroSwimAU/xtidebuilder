@@ -44,11 +44,11 @@ jobs:
             EXPECTEDSIZE=$(stat -c%s $BINNAME)
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
-            echo -n "$BINNAME - $ACTUALSIZE $EXPECTEDSIZE - $ACTUALHASH $EXPECTEDHASH "
+            echo -n "$BINNAME - $ACTUALSIZE $EXPECTEDSIZE - $ACTUALHASH $EXPECTEDHASH " >> $GITHUB_STEP_SUMMARY
             if [[ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]]; then
-              echo "✅"
+              echo "✅" >> $GITHUB_STEP_SUMMARY
             else
-              echo "❌"
+              echo "❌" >> $GITHUB_STEP_SUMMARY
               EXITCODE=1
             fi
           done
