@@ -35,16 +35,19 @@ jobs:
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
-          echo "Filename Actual Expected"
+          echo "Filename Size Actual Expected Hash Actual Expected"
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
             BINNAME=$(basename $i)
             wget -q https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
-            EXPECTED=$(tail -c +64 $BINNAME | md5sum | cut -d ' ' -f 1)
-            ACTUAL=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
-            if [ $EXPECTED == $ACTUAL ]; then
-              echo "$BINNAME $ACTUAL $EXPECTED ✅"
+            EXPECTEDHASH=$(tail -c +64 $BINNAME | md5sum | cut -d ' ' -f 1)
+            EXPECTEDSIZE=$(stat -c%s $BINNAME)
+            ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
+            ACTUALSIZE=$(stat -c%s $i)
+            echo -n "$BINNAME $ACTUALSIZE $EXPECTEDSIZE $ACTUALHASH $EXPECTEDHASH"
+            if [ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]; then
+              echo "✅"
             else
-              echo "$BINNAME $ACTUAL $EXPECTED ❌"
+              echo "❌"
               EXITCODE=1
             fi
           done
