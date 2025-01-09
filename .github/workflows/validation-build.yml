@@ -54,6 +54,7 @@ jobs:
               EXITCODE=1
             fi
           done
+          echo "</table>"  >> $GITHUB_STEP_SUMMARY
           exit $EXITCODE
         shell: bash
           
