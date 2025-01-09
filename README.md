@@ -16,7 +16,7 @@ What this does:
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
 * Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in PCem.
 * Builds the configurator utility, also tested in PCem.
-* Using a Github Action, verifies that the toolchain produces identical results (except build date in header) to the official binaries
+* Using a Github Action, verifies weekly that the toolchain produces identical results (except build date in header) to the official binaries
 
 On Linux (and macOS probably):
 * Install Docker
