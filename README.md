@@ -17,7 +17,13 @@ What this does:
 * Builds the configurator utility, also tested in PCem.
 * Using a Github Action, verifies weekly that the toolchain produces identical results (except build date in header) to the official binaries
 
-[![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
+Last manual validation:
+
+[![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
+
+Last scheduled validation:
+
+[![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=schedule)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
 
 On Linux (and macOS probably):
 * Install Docker
