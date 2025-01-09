@@ -44,7 +44,7 @@ jobs:
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
             echo -n "$BINNAME $ACTUALSIZE $EXPECTEDSIZE $ACTUALHASH $EXPECTEDHASH"
-            if [ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]; then
+            if [[ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]]; then
               echo "✅"
             else
               echo "❌"
