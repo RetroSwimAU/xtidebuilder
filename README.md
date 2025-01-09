@@ -51,6 +51,9 @@ Extra features:
   * Requires Make, NASM, UPX, Subversion, and Perl.
     * E.g. `sudo apt install make nasm upx-ucl subversion perl`
   * Clone the repo and run `./uncontained.sh`
+ 
+Validation:
+* Builds the `all` target, pulls the current binaries from the XUB website, and compares the hashes, excluding the first 64 bytes where the build date is baked in (probably don't need quite 64, but seemed like a nice round number).
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
