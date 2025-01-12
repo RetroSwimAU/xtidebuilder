@@ -52,6 +52,7 @@ jobs:
           mkdir -p ${{ github.workspace }}/compare
           cd ${{ github.workspace }}/compare
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
+          BUILDDATE=$(date "+%Y-%m-%d")
           NASMVER=$(cat ${{ github.workspace }}/src/nasmver.txt)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
@@ -67,6 +68,7 @@ jobs:
             echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
           done
           echo "</table>"  >> $GITHUB_STEP_SUMMARY
+          echo "<p>QEMU screenshot, check release is r$RELEASE and date is $BUILDDATE</p>"  >> $GITHUB_STEP_SUMMARY
           echo -n '<img src='  >> $GITHUB_STEP_SUMMARY
           echo -n "$IMG_URL"  >> $GITHUB_STEP_SUMMARY
           echo '" alt="Screenshot">'  >> $GITHUB_STEP_SUMMARY
