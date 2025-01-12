@@ -1,9 +1,8 @@
-This is a nice automated way to build XTIDE Universal BIOS ROMs, including creating custom builds.
+This is a nice automated way to build XTIDE Universal BIOS ROMs, including creating custom builds. The latter being the real benefit here.
 
 What this does:
 * Creates a containerised environment with
   * Debian Linux Bookworm
-    * NB: If the official build server upgrades NASM, this will need to be revisited/updated.
   * Bash
   * Subversion
   * GNU Make
@@ -13,9 +12,9 @@ What this does:
 * Clones the XUB Subversion repo
 * Patches the Makefiles to be nice and unixy
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
-* Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in PCem.
-* Builds the configurator utility, also tested in PCem.
-* Using a Github Action, verifies weekly that the toolchain produces identical results (except build date in header) to the official binaries
+* Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in QEMU.
+* Builds the configurator utility, tested in QEMU.
+* Using a Github Action, verifies weekly that the toolchain produces working results
 
 Last manual validation:
 
@@ -44,7 +43,7 @@ On Windows:
   * Open Command Prompt or PowerShell and go to where you unzipped it. Make sure you see compose.yaml in `dir`.
   * Type `docker compose up` (Or `docker-compose up` maybe, if docker is an older version)
   * Should receive XUB binaries, look in `src/trunk/XTIDE_Universal_BIOS/Build` under where you executed the docker command.
-  * ~~NB: I haven't tried this.~~ Works great! :D
+  * ~~NB: I haven't tried this.~~ Tried it now, and it works great! :D
  
 Extra features:
 * Edit the `options` file under resources to affect how the build is performed
@@ -60,8 +59,8 @@ Extra features:
   * Clone the repo and run `./uncontained.sh`
  
 Validation:
-* Builds the `all` target, pulls the current binaries from the XUB website, and compares the hashes, excluding the first 64 bytes where the build date is baked in (probably don't need quite 64, but seemed like a nice round number).
-* Highly dependent on having the same version of NASM used to build the official binaries. OK for now, if validations fail in future, the docker base image will likely need to be updated.
+* On a weekly schedule, GitHub builds the `checksum` target, and boots the `ide_386.bin` artifact in QEMU with a pre-built HDD image.
+* A screenshot is saved from QEMU and provided on the action summary to ensure the toolchain is producing viable binaries.
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
