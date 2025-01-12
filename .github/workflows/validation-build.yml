@@ -32,6 +32,7 @@ jobs:
             ./xtide_build.sh
       - name: Test output
         run: |
+          sudo apt-get update
           sudo apt-get install -y qemu-system socat
           qemu-system-i386 -cpu 486 -option-rom ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/ide_386.bin -nic none -hda ${{ github.workspace }}/.github/workflows/resources/validation_hdd.img -display none -monitor unix:qemu-monitor-socket,server,nowait &
           echo "Started QEMU, wait 20 sec."
