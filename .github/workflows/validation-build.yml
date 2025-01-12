@@ -56,7 +56,8 @@ jobs:
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
           echo "<h2>Build Results</h2>" >> $GITHUB_STEP_SUMMARY
-          echo "<p>NASM Version: $NASMVER</p>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>$NASMVER</p>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>Build target: checksum</p>"   >> $GITHUB_STEP_SUMMARY
           echo "<table>" >> $GITHUB_STEP_SUMMARY
           echo "<tr><th>Filename</th><th>Size</th><th>Hash</th></tr>" >> $GITHUB_STEP_SUMMARY
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
@@ -66,7 +67,7 @@ jobs:
             echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
           done
           echo "</table>"  >> $GITHUB_STEP_SUMMARY
-          echo "![Image]($IMG_URL)"
+          echo "![Image]($IMG_URL)"  >> $GITHUB_STEP_SUMMARY
           exit $EXITCODE
         shell: bash
 
