@@ -67,7 +67,7 @@ jobs:
             echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
           done
           echo "</table>"  >> $GITHUB_STEP_SUMMARY
-          echo "![Image]($IMG_URL)"  >> $GITHUB_STEP_SUMMARY
+          echo "<img src=\"($IMG_URL)\">"  >> $GITHUB_STEP_SUMMARY
           exit $EXITCODE
         shell: bash
 
