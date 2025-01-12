@@ -11,8 +11,8 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Select 'all' target
-        run: sed -i "s/checksum/all/g" ${{ github.workspace }}/resources/options
+#      - name: Select 'all' target
+#        run: sed -i "s/checksum/all/g" ${{ github.workspace }}/resources/options
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.11.0
         with:
