@@ -29,6 +29,9 @@ jobs:
             cd /
             ./xtide_build.sh
       - name: Test output
+        id: test_output
+        env:
+          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_APP_ID }}
         run: |
           sudo apt-get update
           sudo apt-get install -y qemu-system-i386 socat
@@ -38,16 +41,12 @@ jobs:
           DUMPCOMMAND="screendump ${{ github.workspace }}/capture.png"
           echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
           echo "quit" | socat - unix-connect:qemu-monitor-socket
-#      - uses: devicons/public-upload-to-imgur@v2.2.1
-      - uses: James712346/public-upload-to-imgur@v2.2.5
-        name: Upload test output
-        id: imgur_step
-        with:
-          path: ${{ github.workspace }}/capture.png
-          client_id: ${{ secrets.IMGUR_APP_ID }}
+          IMGURL=$(${{ github.workspace }}/.github/workflows/resources/imgur.sh ${{ github.workspace }}/capture.png)
+          echo "Uploaded image to $IMGURL"
+          echo "IMGURL=$IMGURL" >> "$GITHUB_OUTPUT"
       - name: Verify output
         env:
-          IMG_URL: ${{ fromJSON(steps.imgur_step.outputs.imgur_urls)[0] }}
+          IMG_URL: ${{ steps.test_output.outputs.IMGURL }}
         run: |
           mkdir -p ${{ github.workspace }}/compare
           cd ${{ github.workspace }}/compare
