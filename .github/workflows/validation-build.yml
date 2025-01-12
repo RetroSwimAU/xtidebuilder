@@ -37,10 +37,11 @@ jobs:
           sleep 20
           echo "screendump ${{ github.workspace }}/capture.png\nquit" | socat - unix-connect:qemu-monitor-socket
       - uses: actions/upload-artifact@v4
-        name: Upload screencap
-        path: ${{ github.workspace }}/capture.png
-        retention-days: 7
-        compression-level: 0
+        with:
+          name: Upload screencap
+          path: ${{ github.workspace }}/capture.png
+          retention-days: 7
+          compression-level: 0
       - name: Verify output
         run: |
           mkdir -p ${{ github.workspace }}/compare
