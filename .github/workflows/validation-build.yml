@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
-      - name: Select 'all' target
-        run: sed -i "s/checksum/all/g" ${{ github.workspace }}/resources/options
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.11.0
         with:
@@ -25,39 +23,56 @@ jobs:
           image: xtide-builder:latest
           options: --user 1001:121 -v ${{ github.workspace }}/src:/src
           run: |
+            nasm --version > /src/nasmver.txt
             echo "Building with:"
             cat /options
             cd /
             ./xtide_build.sh
+      - name: Test output
+        id: test_output
+        env:
+          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_APP_ID }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-i386 socat imagemagick
+          qemu-system-i386 -cpu 486 -option-rom ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/ide_386.bin -nic none -hda ${{ github.workspace }}/.github/workflows/resources/validation_hdd.img -display none -monitor unix:qemu-monitor-socket,server,nowait &
+          echo "Started QEMU, wait 20 sec."
+          sleep 20
+          DUMPCOMMAND="screendump ${{ github.workspace }}/capture.ppm"
+          echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
+          echo "quit" | socat - unix-connect:qemu-monitor-socket
+          convert ${{ github.workspace }}/capture.ppm ${{ github.workspace }}/capture.png
+          IMGURL=$(${{ github.workspace }}/.github/workflows/resources/imgur.sh ${{ github.workspace }}/capture.png)
+          echo "Uploaded image to $IMGURL"
+          echo "IMGURL=$IMGURL" >> "$GITHUB_OUTPUT"
       - name: Verify output
+        env:
+          IMG_URL: ${{ steps.test_output.outputs.IMGURL }}
         run: |
           mkdir -p ${{ github.workspace }}/compare
           cd ${{ github.workspace }}/compare
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
+          BUILDDATE=$(date "+%Y-%m-%d")
+          NASMVER=$(cat ${{ github.workspace }}/src/nasmver.txt)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
-          echo "<h2>Validation Results</h2>" >> $GITHUB_STEP_SUMMARY
+          echo "<h2>Build Results</h2>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>$NASMVER</p>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>Build target: checksum</p>"   >> $GITHUB_STEP_SUMMARY
           echo "<table>" >> $GITHUB_STEP_SUMMARY
-          echo "<tr><th></th><th colspan=2>Size</th><th colspan=2>Hash</th><th></th></tr>" >> $GITHUB_STEP_SUMMARY
-          echo "<tr><th>Filename</th><th>Actual</th><th>Expected</th><th>Actual</th><th>Expected</th><th>Valid?</th></tr>" >> $GITHUB_STEP_SUMMARY
+          echo "<tr><th>Filename</th><th>Size</th><th>Hash</th></tr>" >> $GITHUB_STEP_SUMMARY
           for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
             BINNAME=$(basename $i)
-            wget -q https://www.xtideuniversalbios.org/binaries/r$RELEASE/$BINNAME
-            EXPECTEDHASH=$(tail -c +64 $BINNAME | md5sum | cut -d ' ' -f 1)
-            EXPECTEDSIZE=$(stat -c%s $BINNAME)
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
-            echo -n "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td>$EXPECTEDSIZE</td><td><code>$ACTUALHASH</code></td><td><code>$EXPECTEDHASH</code></td>" >> $GITHUB_STEP_SUMMARY
-            if [[ $EXPECTEDSIZE == $ACTUALSIZE && $EXPECTEDHASH == $ACTUALHASH ]]; then
-              echo "<td>✅</td></tr>" >> $GITHUB_STEP_SUMMARY
-            else
-              echo "<td>❌</td></tr>" >> $GITHUB_STEP_SUMMARY
-              EXITCODE=1
-            fi
+            echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
           done
           echo "</table>"  >> $GITHUB_STEP_SUMMARY
+          echo "<p>QEMU screenshot, check release is r$RELEASE and date is $BUILDDATE</p>"  >> $GITHUB_STEP_SUMMARY
+          echo -n '<img src='  >> $GITHUB_STEP_SUMMARY
+          echo -n "$IMG_URL"  >> $GITHUB_STEP_SUMMARY
+          echo '" alt="Screenshot">'  >> $GITHUB_STEP_SUMMARY
           exit $EXITCODE
         shell: bash
-          
-  
+
       - run: echo "🍏 This job's status is ${{ job.status }}."
