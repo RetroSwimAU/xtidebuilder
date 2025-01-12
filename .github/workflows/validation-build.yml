@@ -38,7 +38,8 @@ jobs:
           DUMPCOMMAND="screendump ${{ github.workspace }}/capture.png"
           echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
           echo "quit" | socat - unix-connect:qemu-monitor-socket
-      - uses: devicons/public-upload-to-imgur@v2.2.1
+#      - uses: devicons/public-upload-to-imgur@v2.2.1
+      - uses: James712346/public-upload-to-imgur@v2.2.5
         name: Upload test output
         id: imgur_step
         with:
