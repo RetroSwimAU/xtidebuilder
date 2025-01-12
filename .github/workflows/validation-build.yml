@@ -44,7 +44,6 @@ jobs:
         with:
           path: ${{ github.workspace }}/capture.png
           client_id: ${{ secrets.IMGUR_APP_ID }}
-          description: Output for xtidebuilder validation run ${{ github.run_number }} by @${{ github.actor }}
       - name: Verify output
         env:
           IMG_URL: ${{ fromJSON(steps.imgur_step.outputs.imgur_urls)[0] }}
