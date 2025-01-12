@@ -36,8 +36,8 @@ jobs:
           echo "Started QEMU, wait 20 sec."
           sleep 20
           DUMPCOMMAND="screendump ${{ github.workspace }}/capture.png"
-          echo "$DUMPCOMMAND" | socat -,echo=0 unix-connect:qemu-monitor-socket
-          echo "quit" | socat -,echo=0 unix-connect:qemu-monitor-socket
+          echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
+          echo "quit" | socat - unix-connect:qemu-monitor-socket
       - uses: devicons/public-upload-to-imgur@v2.2.2
         name: Upload test output
         id: imgur_step
