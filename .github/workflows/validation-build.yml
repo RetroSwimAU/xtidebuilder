@@ -42,7 +42,7 @@ jobs:
           echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
           echo "quit" | socat - unix-connect:qemu-monitor-socket
           convert ${{ github.workspace }}/capture.ppm ${{ github.workspace }}/capture.png
-          convert ${{ github.workspace }}/capture.png -crop -crop 200x16+0+47 +repage ${{ github.workspace }}/cropped.png
+          convert ${{ github.workspace }}/capture.png -crop 200x16+0+47 +repage ${{ github.workspace }}/cropped.png
           VERSIONSTRING=$(tesseract ${{ github.workspace }}/cropped.png - quiet | awk '{$1=$1};1')
           IMGURL=$(${{ github.workspace }}/.github/workflows/resources/imgur.sh ${{ github.workspace }}/capture.png)
           echo "Uploaded image to $IMGURL"
