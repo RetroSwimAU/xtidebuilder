@@ -34,7 +34,7 @@ jobs:
           IMGUR_CLIENT_ID: ${{ secrets.IMGUR_APP_ID }}
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-i386 socat imagemagick
+          sudo apt-get install -y qemu-system-i386 socat imagemagick tesseract-ocr
           qemu-system-i386 -cpu 486 -option-rom ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/ide_386.bin -nic none -hda ${{ github.workspace }}/.github/workflows/resources/validation_hdd.img -display none -monitor unix:qemu-monitor-socket,server,nowait &
           echo "Started QEMU, wait 20 sec."
           sleep 20
@@ -42,17 +42,22 @@ jobs:
           echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
           echo "quit" | socat - unix-connect:qemu-monitor-socket
           convert ${{ github.workspace }}/capture.ppm ${{ github.workspace }}/capture.png
+          convert ${{ github.workspace }}/capture.png -crop -crop 200x16+0+47 +repage ${{ github.workspace }}/cropped.png
+          VERSIONSTRING=$(tesseract ${{ github.workspace }}/cropped.png - quiet | awk '{$1=$1};1')
           IMGURL=$(${{ github.workspace }}/.github/workflows/resources/imgur.sh ${{ github.workspace }}/capture.png)
           echo "Uploaded image to $IMGURL"
           echo "IMGURL=$IMGURL" >> "$GITHUB_OUTPUT"
+          echo "VERSIONSTRING=$VERSIONSTRING" >> "$GITHUB_OUTPUT"
       - name: Verify output
         env:
           IMG_URL: ${{ steps.test_output.outputs.IMGURL }}
+          ACTUAL_VERSTRING: ${{ steps.test_output.outputs.VERSIONSTRING }}
         run: |
           mkdir -p ${{ github.workspace }}/compare
           cd ${{ github.workspace }}/compare
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           BUILDDATE=$(date "+%Y-%m-%d")
+          EXPECTED_VERSTRING="r$RELEASE ($BUILDDATE)"
           NASMVER=$(cat ${{ github.workspace }}/src/nasmver.txt)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
@@ -68,10 +73,20 @@ jobs:
             echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
           done
           echo "</table>"  >> $GITHUB_STEP_SUMMARY
-          echo "<p>QEMU screenshot, check release is r$RELEASE and date is $BUILDDATE</p>"  >> $GITHUB_STEP_SUMMARY
+          echo "<h3>QEMU screenshot</h3>"  >> $GITHUB_STEP_SUMMARY
           echo -n '<img src='  >> $GITHUB_STEP_SUMMARY
           echo -n "$IMG_URL"  >> $GITHUB_STEP_SUMMARY
           echo '" alt="Screenshot">'  >> $GITHUB_STEP_SUMMARY
+          echo "<p>Version string:</p>"  >> $GITHUB_STEP_SUMMARY
+          echo "<table><tr><th>Expected</th><th>Actual</th><th>Pass?</th></tr>" >> $GITHUB_STEP_SUMMARY
+          echo -n "<tr><td>$EXPECTED_VERSTRING</td><td>$ACTUAL_VERSTRING</td><td>" >> $GITHUB_STEP_SUMMARY
+          if [[ "$EXPECTED_VERSTRING" == "$ACTUAL_VERSTRING" ]]; then
+            echo -n "✅" >> $GITHUB_STEP_SUMMARY
+          else
+            echo -n "❌" >> $GITHUB_STEP_SUMMARY
+            EXITCODE=1
+          fi
+          echo "</td></tr></table>" >> $GITHUB_STEP_SUMMARY
           exit $EXITCODE
         shell: bash
 
