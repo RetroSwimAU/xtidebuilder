@@ -19,9 +19,9 @@ jobs:
       - name: Build XTIDE
         run: |
           cd ${{ github.workspace }}
-          nasm --version > src/nasmver.txt
           PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH" ./uncontained.sh
-        
+          nasm --version > ${{ github.workspace }}/src/nasmver.txt
+          
             
       - name: Store build artifact
         uses: actions/upload-artifact@v4
