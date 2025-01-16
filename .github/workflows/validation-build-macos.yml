@@ -10,10 +10,12 @@ jobs:
   Build-Generation:
     runs-on: macos-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: Docker Setup Docker
+        uses: docker/setup-docker-action@v4.1.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
         
       - name: Check out repository code
         uses: actions/checkout@v4
