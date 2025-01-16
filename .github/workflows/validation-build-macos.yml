@@ -52,7 +52,7 @@ jobs:
       - name: Retrieve build artifact
         uses: actions/download-artifact@v4
         with:
-          name: ide-386-bin
+          name: ide-bin
           path: ${{ github.workspace }}/
       - name: Retrieve NASM version
         uses: actions/download-artifact@v4
