@@ -60,6 +60,8 @@ jobs:
     runs-on: ubuntu-latest
     needs: Build-Generation
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
       - name: Retrieve build artifact
         uses: actions/download-artifact@v4
         with:
