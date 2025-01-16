@@ -14,17 +14,26 @@ What this does:
 * Patches out trailing whitespace in `Revision.inc`, which causes build errors (see BuB's video)
 * Builds the XUB binaries using the `checksum` target, producing ready-to-burn ROM images, tested in QEMU.
 * Builds the configurator utility, tested in QEMU.
-* Using a Github Action, verifies weekly that the toolchain produces working results
+* Using a Github Action, verifies weekly that the toolchain produces working results in Linux, and macOS x86+ARM.
 
 Last manual validation:
 
-[![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
+Linux [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
+
+macOS [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos.yml)
+
+macOS ARM [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos-arm.yml/badge.svg?branch=main&event=workflow_dispatch)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos-arm.yml)
 
 Last scheduled validation:
 
-[![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=schedule)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
+Linux [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml/badge.svg?branch=main&event=schedule)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build.yml)
 
-On Linux (and macOS probably):
+macOS [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos.yml/badge.svg?branch=main&event=schedule)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos.yml)
+
+macOS ARM [![Weekly Build Validation](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos-arm.yml/badge.svg?branch=main&event=schedule)](https://github.com/RetroSwimAU/xtidebuilder/actions/workflows/validation-build-macos-arm.yml)
+
+
+On Linux and macOS:
 * Install Docker
 * Make sure current user can run docker without sudo `sudo usermod -aG docker $(whoami)`. Might need a reboot.
 * Clone this repository `git clone https://github.com/RetroSwimAU/xtidebuilder` then run `./runme.sh`
@@ -61,6 +70,7 @@ Extra features:
 Validation:
 * On a weekly schedule, GitHub builds the `checksum` target, and boots the `ide_386.bin` artifact in QEMU with a pre-built HDD image.
 * A screenshot is saved from QEMU and provided on the action summary to ensure the toolchain is producing viable binaries.
+* The ARM validation currently does not use Docker, but rather tha `uncontained.sh`. This is a GutHub hosted runner limitation, may be fixed in the future.
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts

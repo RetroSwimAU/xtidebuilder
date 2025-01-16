@@ -1,0 +1,124 @@
+name: Weekly Build Validation (macOS ARM)
+run-name: Validation run ${{ github.run_number }} by @${{ github.actor }} (macOS ARM)
+on: 
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'
+
+jobs:
+  Build-Generation:
+    runs-on: macos-14
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install build tools
+        run: brew install upx nasm make perl subversion gnu-sed
+
+      - name: Build XTIDE
+        run: |
+          cd ${{ github.workspace }}
+          PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH" ./uncontained.sh
+          nasm --version > ${{ github.workspace }}/src/nasmver.txt
+          
+            
+      - name: Store build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ide-bin
+          path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
+      - name: Store NASM version
+        uses: actions/upload-artifact@v4
+        with:
+          name: nasmver
+          path: ${{ github.workspace }}/src/nasmver.txt
+      - name: Store XTIDE Revision
+        uses: actions/upload-artifact@v4
+        with:
+          name: revision
+          path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc
+
+  Build-Validation:
+    runs-on: ubuntu-latest
+    needs: Build-Generation
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Retrieve build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ide-bin
+          path: ${{ github.workspace }}/
+      - name: Retrieve NASM version
+        uses: actions/download-artifact@v4
+        with:
+          name: nasmver
+          path: ${{ github.workspace }}/
+      - name: Retrieve XTIDE Revision
+        uses: actions/download-artifact@v4
+        with:
+          name: revision
+          path: ${{ github.workspace }}/
+      - name: Test output
+        id: test_output
+        env:
+          IMGUR_CLIENT_ID: ${{ secrets.IMGUR_APP_ID }}
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-i386 socat imagemagick tesseract-ocr
+          qemu-system-i386 -cpu 486 -option-rom ${{ github.workspace }}/ide_386.bin -nic none -hda ${{ github.workspace }}/.github/workflows/resources/validation_hdd.img -display none -monitor unix:qemu-monitor-socket,server,nowait &
+          echo "Started QEMU, wait 20 sec."
+          sleep 20
+          DUMPCOMMAND="screendump ${{ github.workspace }}/capture.ppm"
+          echo "$DUMPCOMMAND" | socat - unix-connect:qemu-monitor-socket
+          echo "quit" | socat - unix-connect:qemu-monitor-socket
+          convert ${{ github.workspace }}/capture.ppm ${{ github.workspace }}/capture.png
+          convert ${{ github.workspace }}/capture.png -crop 200x16+0+47 +repage ${{ github.workspace }}/cropped.png
+          VERSIONSTRING=$(tesseract ${{ github.workspace }}/cropped.png - quiet | awk '{$1=$1};1')
+          IMGURL=$(${{ github.workspace }}/.github/workflows/resources/imgur.sh ${{ github.workspace }}/capture.png)
+          echo "Uploaded image to $IMGURL"
+          echo "IMGURL=$IMGURL" >> "$GITHUB_OUTPUT"
+          echo "VERSIONSTRING=$VERSIONSTRING" >> "$GITHUB_OUTPUT"
+      - name: Verify output
+        env:
+          IMG_URL: ${{ steps.test_output.outputs.IMGURL }}
+          ACTUAL_VERSTRING: ${{ steps.test_output.outputs.VERSIONSTRING }}
+        run: |
+          mkdir -p ${{ github.workspace }}/compare
+          cd ${{ github.workspace }}/compare
+          RELEASE=$(cat ${{ github.workspace }}/Revision.inc | xargs)
+          BUILDDATE=$(date "+%Y-%m-%d")
+          EXPECTED_VERSTRING="r$RELEASE ($BUILDDATE)"
+          NASMVER=$(cat ${{ github.workspace }}/nasmver.txt)
+          echo "Compare output with official binaries @ r$RELEASE."
+          EXITCODE=0
+          echo "<h2>Build Results</h2>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>$NASMVER</p>" >> $GITHUB_STEP_SUMMARY
+          echo "<p>Build target: checksum</p>"   >> $GITHUB_STEP_SUMMARY
+          echo "<table>" >> $GITHUB_STEP_SUMMARY
+          echo "<tr><th>Filename</th><th>Size</th><th>Hash</th></tr>" >> $GITHUB_STEP_SUMMARY
+          for i in ${{ github.workspace }}/*.bin; do
+            BINNAME=$(basename $i)
+            ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
+            ACTUALSIZE=$(stat -c%s $i)
+            echo "<tr><td>$BINNAME</td><td>$ACTUALSIZE</td><td><code>$ACTUALHASH</code></td></tr>" >> $GITHUB_STEP_SUMMARY
+          done
+          echo "</table>"  >> $GITHUB_STEP_SUMMARY
+          echo "<h3>QEMU screenshot</h3>"  >> $GITHUB_STEP_SUMMARY
+          echo -n '<img src="'  >> $GITHUB_STEP_SUMMARY
+          echo -n "$IMG_URL"  >> $GITHUB_STEP_SUMMARY
+          echo '" alt="Screenshot">'  >> $GITHUB_STEP_SUMMARY
+          echo "<p>Version string:</p>"  >> $GITHUB_STEP_SUMMARY
+          echo "<table><tr><th>Expected</th><th>Actual</th><th>Pass?</th></tr>" >> $GITHUB_STEP_SUMMARY
+          echo -n "<tr><td>$EXPECTED_VERSTRING</td><td>$ACTUAL_VERSTRING</td><td>" >> $GITHUB_STEP_SUMMARY
+          if [[ "$EXPECTED_VERSTRING" == "$ACTUAL_VERSTRING" ]]; then
+            echo -n "✅" >> $GITHUB_STEP_SUMMARY
+          else
+            echo -n "❌" >> $GITHUB_STEP_SUMMARY
+            EXITCODE=1
+          fi
+          echo "</td></tr></table>" >> $GITHUB_STEP_SUMMARY
+          exit $EXITCODE
+        shell: bash
+
+      - run: echo "🍏 This job's status is ${{ job.status }}."
