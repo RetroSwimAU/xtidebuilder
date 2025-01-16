@@ -1,10 +1,9 @@
-name: Weekly Build Validation (macOS)
-run-name: Validation run ${{ github.run_number }} by @${{ github.actor }} (macOS)
+name: Weekly Build Validation (macOS x86)
+run-name: Validation run ${{ github.run_number }} by @${{ github.actor }} (macOS x86)
 on: 
   workflow_dispatch:
-  push:
-#  schedule:
-#    - cron: '0 0 * * 0'
+  schedule:
+    - cron: '0 0 * * 0'
 
 jobs:
   Build-Generation:
