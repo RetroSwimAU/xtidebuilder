@@ -37,7 +37,12 @@ jobs:
         with:
           name: nasmver
           path: ${{ github.workspace }}/src/nasmver.txt
-          
+      - name: Store XTIDE Revision
+        uses: actions/upload-artifact@v4
+        with:
+          name: revision
+          path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc
+
   Build-Validation:
     runs-on: ubuntu-latest
     needs: Build-Generation
@@ -53,6 +58,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: nasmver
+          path: ${{ github.workspace }}/
+      - name: Retrieve XTIDE Revision
+        uses: actions/download-artifact@v4
+        with:
+          name: revision
           path: ${{ github.workspace }}/
       - name: Test output
         id: test_output
@@ -81,7 +91,7 @@ jobs:
         run: |
           mkdir -p ${{ github.workspace }}/compare
           cd ${{ github.workspace }}/compare
-          RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
+          RELEASE=$(cat ${{ github.workspace }}/Revision.inc | xargs)
           BUILDDATE=$(date "+%Y-%m-%d")
           EXPECTED_VERSTRING="r$RELEASE ($BUILDDATE)"
           NASMVER=$(cat ${{ github.workspace }}/nasmver.txt)
