@@ -30,7 +30,7 @@ jobs:
 #      - run: |
 #          cd ${{ github.workspace }}
 #          docker build . --tag xtide-builder:latest
-      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder:latest "-c" "nasm --version" > ${{ github.workspace }}/src/nasmver.txt
+      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder:latest "-c" "nasm --version > /src/nasmver.txt"
         name: Export NASM version
       - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder:latest
         name: Build binaries
