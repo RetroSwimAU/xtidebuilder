@@ -48,12 +48,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ide-386-bin
-          path: ${{ github.workspace }}/ide_386.bin
+          path: ${{ github.workspace }}/
       - name: Retrieve NASM version
         uses: actions/download-artifact@v4
         with:
           name: nasmver
-          path: ${{ github.workspace }}/nasmver.txt
+          path: ${{ github.workspace }}/
       - name: Test output
         id: test_output
         env:
