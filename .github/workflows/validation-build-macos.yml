@@ -30,8 +30,8 @@ jobs:
       - name: Store build artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ide-386-bin
-          path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/ide_386.bin
+          name: ide-bin
+          path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin
       - name: Store NASM version
         uses: actions/upload-artifact@v4
         with:
@@ -102,7 +102,7 @@ jobs:
           echo "<p>Build target: checksum</p>"   >> $GITHUB_STEP_SUMMARY
           echo "<table>" >> $GITHUB_STEP_SUMMARY
           echo "<tr><th>Filename</th><th>Size</th><th>Hash</th></tr>" >> $GITHUB_STEP_SUMMARY
-          for i in ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/*.bin; do
+          for i in ${{ github.workspace }}/*.bin; do
             BINNAME=$(basename $i)
             ACTUALHASH=$(tail -c +64 $i | md5sum | cut -d ' ' -f 1)
             ACTUALSIZE=$(stat -c%s $i)
