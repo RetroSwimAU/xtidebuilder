@@ -1,5 +1,5 @@
 name: Weekly Build Validation (macOS)
-run-name: Validation run ${{ github.run_number }} by @${{ github.actor }}
+run-name: Validation run ${{ github.run_number }} by @${{ github.actor }} (macOS)
 on: 
   workflow_dispatch:
   push:
@@ -16,20 +16,20 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup Docker on macOS
         uses: douglascamata/setup-docker-macos-action@v1-alpha
-      - name: Docker Setup Buildx
-        uses: docker/setup-buildx-action@v3.8.0
+#      - name: Docker Setup Buildx
+#        uses: docker/setup-buildx-action@v3.8.0
 
-      - name: Build and push Docker images
-        uses: docker/build-push-action@v6.11.0
-        with:
-          context: ${{ github.workspace }}
-          push: false
-          tags: xtide-builder:latest
-          load: true
+#      - name: Build and push Docker images
+#        uses: docker/build-push-action@v6.11.0
+#        with:
+#          context: ${{ github.workspace }}
+#          push: false
+#          tags: xtide-builder:latest
+#          load: true
 
-#      - run: |
-#          cd ${{ github.workspace }}
-#          docker build . --tag xtide-builder:latest
+      - run: |
+          cd ${{ github.workspace }}
+          docker build . --tag xtide-builder:latest
       - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder:latest "-c" "nasm --version > /src/nasmver.txt"
         name: Export NASM version
       - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder:latest
