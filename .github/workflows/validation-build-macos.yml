@@ -10,6 +10,7 @@ jobs:
   Build-Generation:
     runs-on: macos-13
     steps:
+      - run: mkdir -p ${{ github.workspace }}/src
       - name: Check out repository code
         uses: actions/checkout@v4
       - name: Setup Docker on macOS
@@ -23,10 +24,13 @@ jobs:
           context: ${{ github.workspace }}
           push: false
           tags: xtide-builder:latest
+          load: true
 
-      - run: mkdir -p ${{ github.workspace }}/src
-      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder "-c" "nasm --version" > ${{ github.workspace }}/src/nasmver.txt
-      - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder
+#      - run: |
+#          cd ${{ github.workspace }}
+#          docker build . --tag xtide-builder:latest
+      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder:latest "-c" "nasm --version" > ${{ github.workspace }}/src/nasmver.txt
+      - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder:latest
       
 #      - uses: addnab/docker-run-action@v3
 #        with:
