@@ -19,6 +19,7 @@ jobs:
       - name: Build XTIDE
         run: |
           cd ${{ github.workspace }}
+          nasm --version > src/nasmver.txt
           PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH" ./uncontained.sh
         
             
