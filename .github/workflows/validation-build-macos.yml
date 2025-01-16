@@ -25,7 +25,7 @@ jobs:
           tags: xtide-builder:latest
 
       - run: mkdir -p ${{ github.workspace }}/src
-      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder "-c" "nasm --version" > /src/nasmver.txt
+      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder "-c" "nasm --version" > ${{ github.workspace }}/src/nasmver.txt
       - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder
       
 #      - uses: addnab/docker-run-action@v3
