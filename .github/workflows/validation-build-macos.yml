@@ -23,32 +23,46 @@ jobs:
           context: ${{ github.workspace }}
           push: false
           tags: xtide-builder:latest
+
       - run: mkdir -p ${{ github.workspace }}/src
-      - uses: addnab/docker-run-action@v3
-        with:
-          image: xtide-builder:latest
-          options: --user 1001:121 -v ${{ github.workspace }}/src:/src
-          run: |
-            nasm --version > /src/nasmver.txt
-            echo "Building with:"
-            cat /options
-            cd /
-            ./xtide_build.sh
+      - run: docker run -v ${{ github.workspace }}/src:/src --entrypoint /bin/bash xtide_builder "-c" "nasm --version" > /src/nasmver.txt
+      - run: docker run -v ${{ github.workspace }}/src:/src xtide_builder
+      
+#      - uses: addnab/docker-run-action@v3
+#        with:
+#          image: xtide-builder:latest
+#          options: --user 1001:121 -v ${{ github.workspace }}/src:/src
+#          run: |
+#            nasm --version > /src/nasmver.txt
+#            echo "Building with:"
+#            cat /options
+#            cd /
+#            ./xtide_build.sh
       - name: Store build artifact
         uses: actions/upload-artifact@v4
         with:
           name: ide-386-bin
           path: ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Build/ide_386.bin
+      - name: Store NASM version
+        uses: actions/upload-artifact@v4
+        with:
+          name: nasmver
+          path: ${{ github.workspace }}/src/nasmver.txt
           
   Build-Validation:
     runs-on: ubuntu-latest
     needs: Build-Generation
     steps:
       - name: Retrieve build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/download-artifact@v4
         with:
           name: ide-386-bin
           path: ${{ github.workspace }}/ide_386.bin
+      - name: Retrieve NASM version
+        uses: actions/download-artifact@v4
+        with:
+          name: nasmver
+          path: ${{ github.workspace }}/nasmver.txt
       - name: Test output
         id: test_output
         env:
@@ -79,7 +93,7 @@ jobs:
           RELEASE=$(cat ${{ github.workspace }}/src/trunk/XTIDE_Universal_BIOS/Inc/Revision.inc | xargs)
           BUILDDATE=$(date "+%Y-%m-%d")
           EXPECTED_VERSTRING="r$RELEASE ($BUILDDATE)"
-          NASMVER=$(cat ${{ github.workspace }}/src/nasmver.txt)
+          NASMVER=$(cat ${{ github.workspace }}/nasmver.txt)
           echo "Compare output with official binaries @ r$RELEASE."
           EXITCODE=0
           echo "<h2>Build Results</h2>" >> $GITHUB_STEP_SUMMARY
