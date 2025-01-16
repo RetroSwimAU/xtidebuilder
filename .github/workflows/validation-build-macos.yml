@@ -19,14 +19,6 @@ jobs:
       - name: Docker Setup Buildx
         uses: docker/setup-buildx-action@v3.8.0
 
-#      - name: Build and push Docker images
-#        uses: docker/build-push-action@v6.11.0
-#        with:
-#          context: ${{ github.workspace }}
-#          push: false
-#          tags: xtide-builder:latest
-#          load: true
-
       - run: |
           cd ${{ github.workspace }}
           docker build . --tag xtide_builder:latest --load --platform=linux/amd64
@@ -35,16 +27,6 @@ jobs:
       - run: docker run -v ${{ github.workspace }}/src:/src --platform=linux/amd64 xtide_builder:latest
         name: Build binaries
       
-#      - uses: addnab/docker-run-action@v3
-#        with:
-#          image: xtide-builder:latest
-#          options: --user 1001:121 -v ${{ github.workspace }}/src:/src
-#          run: |
-#            nasm --version > /src/nasmver.txt
-#            echo "Building with:"
-#            cat /options
-#            cd /
-#            ./xtide_build.sh
       - name: Store build artifact
         uses: actions/upload-artifact@v4
         with:
