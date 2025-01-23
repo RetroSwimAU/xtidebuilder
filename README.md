@@ -66,11 +66,13 @@ Extra features:
   * Requires Make, NASM, UPX, Subversion, and Perl.
     * E.g. `sudo apt install make nasm upx-ucl subversion perl`
   * Clone the repo and run `./uncontained.sh`
+    * Scripts use GNU `sed` syntax, so on macOS, get `gnu-sed` from Homebrew `brew install gnu-sed`.
+    * Then something like `PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH" ./uncontained.sh` should allow the script work.
  
 Validation:
 * On a weekly schedule, GitHub builds the `checksum` target, and boots the `ide_386.bin` artifact in QEMU with a pre-built HDD image.
 * A screenshot is saved from QEMU and provided on the action summary to ensure the toolchain is producing viable binaries.
-* The ARM validation currently does not use Docker, but rather tha `uncontained.sh`. This is a GutHub hosted runner limitation, may be fixed in the future.
+* The ARM validation currently does not use Docker, but rather tha `uncontained.sh`. This is a GitHub hosted runner limitation, may be fixed in the future.
 
 Credits:
 * Bits Und Bolts https://www.youtube.com/@bitsundbolts
